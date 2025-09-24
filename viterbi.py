@@ -1,27 +1,30 @@
 """Viterbi Algorithm for inferring the most likely sequence of states from an HMM.
 
-Patrick Wang, 2021
+Patrick Wang, 2025
 """
 
-from typing import Sequence, Tuple, TypeVar
+from typing import Sequence
 import numpy as np
 
-Q = TypeVar("Q")
-V = TypeVar("V")
 
 def viterbi(
     obs: Sequence[int],
-    pi: np.ndarray[Tuple[Q], np.dtype[np.float64]],
-    A: np.ndarray[Tuple[Q, Q], np.dtype[np.float64]],
-    B: np.ndarray[Tuple[Q, V], np.dtype[np.float64]],
+    pi: np.ndarray[tuple[int], np.dtype[np.float64]],
+    A: np.ndarray[tuple[int, int], np.dtype[np.float64]],
+    B: np.ndarray[tuple[int, int], np.dtype[np.float64]],
 ) -> tuple[list[int], float]:
     """Infer most likely state sequence using the Viterbi algorithm.
 
+    Q is the number of possible states.
+    V is the number of possible observations.
+    N is the length of the observation sequence.
+
+
     Args:
-        obs: An iterable of ints representing observations.
-        pi: A 1D numpy array of floats representing initial state probabilities.
-        A: A 2D numpy array of floats representing state transition probabilities.
-        B: A 2D numpy array of floats representing emission probabilities.
+        obs: A length-N sequence of ints representing observations.
+        pi: A length-Q numpy array of floats representing initial state probabilities.
+        A: A Q-by-Q numpy array of floats representing state transition probabilities.
+        B: A Q-by-V numpy array of floats representing emission probabilities.
 
     Returns:
         A tuple of:
