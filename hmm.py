@@ -37,12 +37,18 @@ def build_pos_index_maps(posCounts):
 
 #function that return inital probabilities of each probabilities state 
 #calculated by (number of this tokens in corpus of type of part of speech)/(number of tokens in corpus)
-def get_pi_vector(posCounts, totalTokens) -> np.ndarray[tuple[int], np.dtype[np.float64]]:
-    pi = np.zeros((posCounts,), dtype=np.float64)
-    i = 0
-    #for pos in posCounts:
-        #pi[i] = (posCounts, 
-    pass
+def get_pi_vector(posCounts, totalTokens):
+    pi = np.zeros((len(posCounts),), dtype=np.float64) #set a one dimensional array of length of posCounts
+    #get indices of each pos
+    mapping = build_pos_index_maps(posCounts)
+    idx_to_pos = mapping[2]
+    for i in range(len(posCounts)):
+        pi[i] = posCounts[idx_to_pos[i]]/totalTokens
+    return pi
+
+
+
+
     
 
 
