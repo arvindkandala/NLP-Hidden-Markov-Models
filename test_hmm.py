@@ -18,7 +18,7 @@ totalTokens = get_pos_counts(nltk.corpus.brown.tagged_sents(tagset='universal')[
 print(get_pi_vector(posCountsDict,totalTokens))
 
 
-
+#code to build pi vector
 sentences = nltk.corpus.brown.tagged_sents(tagset='universal')[:10000]
 firstWordsOfSentences = [[s[0]] for s in sentences if s] #I put s[0] inside brackets so my get_pos_counts function works still
 print(get_pos_counts(firstWordsOfSentences))
