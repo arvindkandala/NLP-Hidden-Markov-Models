@@ -41,11 +41,12 @@ def build_pos_index_maps(posCounts):
 
 def get_pi_vector(startPosCounts, totalStartTokens, idx_to_pos):
     pi = np.zeros((len(idx_to_pos),), dtype=np.float64) #set a one dimensional array of length = number of total parts of speech in total corpus
+    denom = totalStartTokens + len(idx_to_pos)
     for i in range(len(idx_to_pos)):
         if idx_to_pos[i] in startPosCounts: #if that pos has ever come at beginning of a sentence
-            pi[i] = startPosCounts[idx_to_pos[i]]/totalStartTokens
+            pi[i] = (startPosCounts[idx_to_pos[i]]+1)/denom
         else:
-            pi[i] = 0    
+            pi[i] = 1/denom
     return pi
 
 def get_A_matrix(pos_to_idx, sentences):
@@ -64,7 +65,7 @@ def get_A_matrix(pos_to_idx, sentences):
 
         for posPost in posPostCounts:
             posPostCounts[posPost] = posPostCounts[posPost]/(posPreCount+q) #now we have the probability of each posPost coming after posPre, q added for smoothing
-            A[pos_to_idx[posPre]][pos_to_idx[posPost]] = posPostCounts[posPost]
+            A[pos_to_idx[posPre], pos_to_idx[posPost]] = posPostCounts[posPost]
     return A
 
 def get_vocab_with_UNK(sentences):
@@ -75,16 +76,40 @@ def get_vocab_with_UNK(sentences):
     vocab.add('UNK')
     return vocab
 
-def get_B_vector(pos_to_idx, sentences):
-    vocab = get_vocab(sentences)
-    
-    pass
+def get_B_matrix(pos_to_idx, sentences, posCounts, idx_to_pos):
+    vocab = get_vocab_with_UNK(sentences)
+    word_to_idx = {w: i for i, w in enumerate(sorted(vocab))}
+    q = len(pos_to_idx)
+    v = len(vocab)
+    B = np.zeros((q, v), dtype=np.float64)
+
+    for sent in sentences:
+        for tup in sent:
+            i = pos_to_idx[tup[1]]
+            if tup[0] in vocab:
+                j = word_to_idx[tup[0]]
+            else:
+                j = word_to_idx['UNK']
+            B[i,j] += 1
+        
+    for i in range(q):
+        for j in range(v):
+            B[i,j] += 1 #add-1 smoothing
+
+    for i in range(q):
+        denom = posCounts[idx_to_pos[i]] + v
+        for j in range(v):
+            B[i,j] = B[i,j] / denom #part of smoothing
+        
+    return B
+
+            
 
     
 
 
-def build_matrices():
-    sentences = nltk.corpus.brown.tagged_sents(tagset='universal')[:10000]
+def build_matrices(corpus):
+    sentences = corpus #nltk.corpus.brown.tagged_sents(tagset='universal')[:10000]
     posCounts, totalTokens = get_pos_counts(sentences)
     tags, pos_to_idx, idx_to_pos = build_pos_index_maps(posCounts)
 
@@ -94,8 +119,7 @@ def build_matrices():
 
     A = get_A_matrix(pos_to_idx, sentences)
 
-    vocab = get_vocab_with_UNK
-    word_to_idx = {w: i for i, w in enumerate(sorted(vocab))}
+    B = get_B_matrix(pos_to_idx,sentences,posCounts,idx_to_pos)
 
-
+    return(pi, A, B)
 

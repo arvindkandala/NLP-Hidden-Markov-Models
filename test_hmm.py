@@ -1,4 +1,4 @@
-from hmm import get_pos_counts, build_pos_index_maps, get_pi_vector
+from hmm import build_matrices
 import nltk
 '''
 print(nltk.corpus.brown.tagged_sents(tagset='universal')[1][0][1]) #[sentence][word][observation/POS]
@@ -26,5 +26,9 @@ posCountsDictStarts = get_pos_counts(firstWordsOfSentences)[0]
 totalStartTokens = get_pos_counts(firstWordsOfSentences)[1]
 print(get_pi_vector(posCountsDictStarts, totalStartTokens))
 
+
+
+pi, A, B = build_matrices(nltk.corpus.brown.tagged_sents(tagset='universal')[:10000])
+print(B.shape)
+
 '''
-print(nltk.corpus.brown.tagged_sents(tagset='universal')[:10000])
