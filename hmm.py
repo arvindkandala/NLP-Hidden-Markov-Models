@@ -101,11 +101,7 @@ def get_B_matrix(pos_to_idx, sentences, posCounts, idx_to_pos):
         for j in range(v):
             B[i,j] = B[i,j] / denom #part of smoothing
         
-    return B
-
-            
-
-    
+    return B    
 
 
 def build_matrices(corpus):
@@ -123,3 +119,11 @@ def build_matrices(corpus):
 
     return(pi, A, B)
 
+def get_obs_seq(testingCorpus, sentences):
+    vocab = get_vocab_with_UNK(sentences)
+    word_to_idx = {w: i for i, w in enumerate(sorted(vocab))}
+    obs = []
+    for sent in testingCorpus:
+        for tup in sent:
+            obs.append(word_to_idx.get(tup[0], word_to_idx['UNK']))
+    return obs

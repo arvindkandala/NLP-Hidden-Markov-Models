@@ -1,4 +1,5 @@
 from hmm import build_matrices
+from viterbi import viterbi
 import nltk
 '''
 print(nltk.corpus.brown.tagged_sents(tagset='universal')[1][0][1]) #[sentence][word][observation/POS]
