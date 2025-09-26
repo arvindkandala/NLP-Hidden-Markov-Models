@@ -1,10 +1,7 @@
 # NLP-Hidden-Markov-Models
 
+When I originally tested my POS tagger, I inputted the observations by taking all of the tokens in 
+    nltk.corpus.brown.tagged_sents(tagset='universal')[10150:10153]
+and putting them in a list and putting that into the viterbi function. This resulted in an accuracy of .34. I realized it was so low because when I was training my model, I was training by each sentence, so there were no (or very few) cases in which any token came after "." in the sentence. This distorted the probabilities. After this, I tried running sentence 10150 through 10152 of the corpus individually, and I received accuracy scores of .92, .89, and 1, respectively. 
 
-##How I worked through this
-
-###Step 1
-    - Go through the corpus and become familiar with the different POS type
-    - I want to go through this and create a dictionary of all of the different POS types
-    - I want to 
- 
+In sentence 10151, the tagger predicted that "face-to-face" was a noun. It is a compound word that can be used like a noun in some cases depending (which can depend on dialect). It also predicted that "one" is a number in the context of "one another" being written. The model doesn't recognize when two words are put together to convey one meaning. In sentence 10150, it predicted coming to be a noun, but the previous word was "those", and it's much more common to see nouns word "those" than verbs. Other than that the model seemed to do a good job of assigning weights to the probability of transitioning between states and the probability of those states given the observations.
