@@ -27,3 +27,4 @@ totalStartTokens = get_pos_counts(firstWordsOfSentences)[1]
 print(get_pi_vector(posCountsDictStarts, totalStartTokens))
 
 '''
+print(nltk.corpus.brown.tagged_sents(tagset='universal')[:10000])

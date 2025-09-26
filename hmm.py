@@ -45,10 +45,41 @@ def get_pi_vector(startPosCounts, totalStartTokens, idx_to_pos):
         if idx_to_pos[i] in startPosCounts: #if that pos has ever come at beginning of a sentence
             pi[i] = startPosCounts[idx_to_pos[i]]/totalStartTokens
         else:
-            pi[i] = 0
+            pi[i] = 0    
     return pi
 
-def get_A_vector()
+def get_A_matrix(pos_to_idx, sentences):
+    q = len(pos_to_idx)
+    A = np.zeros((q, q), dtype=np.float64)
+
+    for posPre in pos_to_idx:
+        posPostCounts = {k: 1 for k in pos_to_idx} #start at 1 instead of 0 for add-1 smoothing
+        posPreCount = 0 #contains the number of times each pos occurs after our pos prefix
+        for sent in sentences: 
+            for i in range(len(sent)): #for each word in each sentence
+                if sent[i][1] == posPre:
+                    posPreCount += 1
+                    if i<len(sent)-1:
+                        posPostCounts[sent[i+1][1]] += 1 #count     
+
+        for posPost in posPostCounts:
+            posPostCounts[posPost] = posPostCounts[posPost]/(posPreCount+q) #now we have the probability of each posPost coming after posPre, q added for smoothing
+            A[pos_to_idx[posPre]][pos_to_idx[posPost]] = posPostCounts[posPost]
+    return A
+
+def get_vocab_with_UNK(sentences):
+    vocab = set()
+    for sent in sentences:
+        for tup in sent:
+            vocab.add(tup[0])
+    vocab.add('UNK')
+    return vocab
+
+def get_B_vector(pos_to_idx, sentences):
+    vocab = get_vocab(sentences)
+    
+    pass
+
     
 
 
@@ -61,6 +92,10 @@ def build_matrices():
     startPosCounts, totalStartTokens = get_pos_counts(firstWordsOfSentences) #note that some pos types might not occur at sentence start, so might be short
     pi = get_pi_vector(startPosCounts,totalStartTokens, idx_to_pos)
 
+    A = get_A_matrix(pos_to_idx, sentences)
+
+    vocab = get_vocab_with_UNK
+    word_to_idx = {w: i for i, w in enumerate(sorted(vocab))}
 
 
 
